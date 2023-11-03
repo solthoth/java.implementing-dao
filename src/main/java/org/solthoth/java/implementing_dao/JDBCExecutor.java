@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class JDBCExecutor {
     public static void main (String... args) {
-        var flag = "UPDATE";
+        var flag = "DELETE";
         DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost", "hplussport", "postgres", "password");
         try {
             Connection connection = dcm.getConnection();
@@ -28,6 +28,18 @@ public class JDBCExecutor {
                 customer.setEmail("sman@gmail.com");
                 customer = customerDAO.update(customer);
                 System.out.println(String.format("%s %s %s", customer.getFirstName(), customer.getLastName(), customer.getEmail()));
+            } else if (flag.equals("DELETE")) {
+                var customer = createNewCustomer();
+                customer.setFirstName("Radio");
+                customer.setEmail("Radio.man@gmail.com");
+                var dbCustomer = customerDAO.create(customer);
+                System.out.println(dbCustomer);
+                dbCustomer = customerDAO.findById(dbCustomer.getId());
+                System.out.println(dbCustomer);
+                dbCustomer.setEmail("rman@gmail.com");
+                dbCustomer = customerDAO.update(dbCustomer);
+                System.out.println(dbCustomer);
+                customerDAO.delete(dbCustomer.getId());
             }
         }catch (SQLException e){
             e.printStackTrace();

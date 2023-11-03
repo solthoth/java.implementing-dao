@@ -85,4 +85,20 @@ public class Customer implements DataTransferObject {
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
+
+    @Override
+    public String toString() {
+        var sb = new StringBuilder("Customer{");
+        sb.append("id=").append(id)
+                .append(", firstName='").append(firstName).append('\'')
+                .append(", lastName='").append(lastName).append('\'')
+                .append(", email='").append(email).append('\'')
+                .append(", phone='").append(phone).append('\'')
+                .append(", address='").append(address).append('\'')
+                .append(", city='").append(city).append('\'')
+                .append(", state='").append(state).append('\'')
+                .append(", zipCode='").append(zipCode).append('\'')
+                .append('}');
+        return sb.toString();
+    }
 }
