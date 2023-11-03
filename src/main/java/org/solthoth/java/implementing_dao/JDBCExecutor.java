@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class JDBCExecutor {
     public static void main (String... args) {
-        var flag = "READ";
+        var flag = "UPDATE";
         DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost", "hplussport", "postgres", "password");
         try {
             Connection connection = dcm.getConnection();
@@ -22,6 +22,12 @@ public class JDBCExecutor {
             } else if (flag.equals("READ")){
                 var customer = customerDAO.findById(10001);
                 System.out.println(String.format("%s %s", customer.getFirstName(), customer.getLastName()));
+            } else if (flag.equals("UPDATE")) {
+                var customer = customerDAO.findById(10001);
+                System.out.println(String.format("%s %s %s", customer.getFirstName(), customer.getLastName(), customer.getEmail()));
+                customer.setEmail("sman@gmail.com");
+                customer = customerDAO.update(customer);
+                System.out.println(String.format("%s %s %s", customer.getFirstName(), customer.getLastName(), customer.getEmail()));
             }
         }catch (SQLException e){
             e.printStackTrace();
