@@ -2,6 +2,7 @@ package org.solthoth.java.implementing_dao;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.function.Consumer;
@@ -17,7 +18,8 @@ public class JDBCExecutor {
         DAOStoredProc(dcm);
         System.out.println("DAO Limit and Order...");
         DAOLimitAndOrderResults(dcm);
-
+        System.out.println("DAO Paging...");
+        DAOPagingResults(dcm);
     }
     public static void DAOPatternExamples (DatabaseConnectionManager dcm, String flag) {
         ExecuteConnection(dcm, connection -> {
@@ -69,6 +71,17 @@ public class JDBCExecutor {
         ExecuteConnection(dcm, connection -> {
             var customerDAO = new CustomerDAO(connection);
             customerDAO.findAllSorted(20).forEach(System.out::println);
+        });
+    }
+    public static void DAOPagingResults(DatabaseConnectionManager dcm) {
+        ExecuteConnection(dcm, connection -> {
+            var customerDAO = new CustomerDAO(connection);
+            customerDAO.findAllSorted(20).forEach(System.out::println);
+            System.out.println("Paged");
+            for(int i=1;i<3;i++){
+                System.out.println("Page number: "+i);
+                customerDAO.findAllPaged(10, i).forEach(System.out::println);
+            }
         });
     }
 
