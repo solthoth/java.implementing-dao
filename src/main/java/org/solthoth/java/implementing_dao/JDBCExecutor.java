@@ -4,20 +4,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.function.Consumer;
 
 public class JDBCExecutor {
     public static void main (String... args) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost", "hplussport", "postgres", "password");
         System.out.println("DAO Pattern Examples...");
-        DAOPatternExamples(dcm,"NONE", args);
+        DAOPatternExamples(dcm,"NONE");
         System.out.println("DAO Challenge...");
         DAOChallenge(dcm);
         System.out.println("DAO Stored Procedures...");
         DAOStoredProc(dcm);
+        System.out.println("DAO Limit and Order...");
+        DAOLimitAndOrderResults(dcm);
 
     }
-    public static void DAOPatternExamples (DatabaseConnectionManager dcm, String flag, String... args) {
-        try(Connection connection = dcm.getConnection()) {
+    public static void DAOPatternExamples (DatabaseConnectionManager dcm, String flag) {
+        ExecuteConnection(dcm, connection -> {
             CustomerDAO customerDAO = new CustomerDAO(connection);
             if (flag.equals("CREATE")) {
                 var customer = createNewCustomer();
@@ -45,26 +48,33 @@ public class JDBCExecutor {
                 System.out.println(dbCustomer);
                 customerDAO.delete(dbCustomer.getId());
             }
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
+        });
     }
     public static void DAOChallenge(DatabaseConnectionManager dcm) {
-        try(Connection connection = dcm.getConnection()) {
+        ExecuteConnection(dcm, connection -> {
             var orderDao = new OrderDAO(connection);
             var orderId = 1003;
             var order = orderDao.findById(orderId);
             System.out.println(order);
-
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
+        });
     }
     public static void DAOStoredProc(DatabaseConnectionManager dcm) {
-        try(Connection connection = dcm.getConnection()){
+        ExecuteConnection(dcm, connection -> {
             var orderDAO = new OrderDAO(connection);
             var orders = orderDAO.getOrdersForCustomer(789);
             orders.forEach(System.out::println);
+        });
+    }
+    public static void DAOLimitAndOrderResults(DatabaseConnectionManager dcm) {
+        ExecuteConnection(dcm, connection -> {
+            var customerDAO = new CustomerDAO(connection);
+            customerDAO.findAllSorted(20).forEach(System.out::println);
+        });
+    }
+
+    public static void ExecuteConnection(DatabaseConnectionManager dcm, Consumer<Connection> operation) {
+        try(Connection connection = dcm.getConnection()){
+            operation.accept(connection);
         }catch (SQLException e){
             e.printStackTrace();
         }
