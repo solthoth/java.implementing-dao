@@ -3,17 +3,16 @@ package org.solthoth.java.implementing_dao;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
 
 public class JDBCExecutor {
     public static void main (String... args) {
-        var flag = "DELETE";
         DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost", "hplussport", "postgres", "password");
-        try {
-            Connection connection = dcm.getConnection();
+        DAOPatternExamples(dcm,"NONE", args);
+        DAOChallenge(dcm);
+    }
+    public static void DAOPatternExamples (DatabaseConnectionManager dcm, String flag, String... args) {
+        try(Connection connection = dcm.getConnection()) {
             CustomerDAO customerDAO = new CustomerDAO(connection);
             if (flag.equals("CREATE")) {
                 var customer = createNewCustomer();
@@ -46,6 +45,17 @@ public class JDBCExecutor {
         }
     }
 
+    public static void DAOChallenge(DatabaseConnectionManager dcm) {
+        try(Connection connection = dcm.getConnection()) {
+            var orderDao = new OrderDAO(connection);
+            var orderId = 1003;
+            var order = orderDao.findById(orderId);
+            System.out.println(order);
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
     public static @NotNull Customer createNewCustomer() {
         var customer = new Customer();
         customer.setFirstName("Speaker");
