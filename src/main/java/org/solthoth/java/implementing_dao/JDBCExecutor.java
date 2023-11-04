@@ -8,8 +8,13 @@ import java.sql.SQLException;
 public class JDBCExecutor {
     public static void main (String... args) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost", "hplussport", "postgres", "password");
+        System.out.println("DAO Pattern Examples...");
         DAOPatternExamples(dcm,"NONE", args);
+        System.out.println("DAO Challenge...");
         DAOChallenge(dcm);
+        System.out.println("DAO Stored Procedures...");
+        DAOStoredProc(dcm);
+
     }
     public static void DAOPatternExamples (DatabaseConnectionManager dcm, String flag, String... args) {
         try(Connection connection = dcm.getConnection()) {
@@ -44,7 +49,6 @@ public class JDBCExecutor {
             e.printStackTrace();
         }
     }
-
     public static void DAOChallenge(DatabaseConnectionManager dcm) {
         try(Connection connection = dcm.getConnection()) {
             var orderDao = new OrderDAO(connection);
@@ -52,6 +56,15 @@ public class JDBCExecutor {
             var order = orderDao.findById(orderId);
             System.out.println(order);
 
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+    public static void DAOStoredProc(DatabaseConnectionManager dcm) {
+        try(Connection connection = dcm.getConnection()){
+            var orderDAO = new OrderDAO(connection);
+            var orders = orderDAO.getOrdersForCustomer(789);
+            orders.forEach(System.out::println);
         }catch (SQLException e){
             e.printStackTrace();
         }

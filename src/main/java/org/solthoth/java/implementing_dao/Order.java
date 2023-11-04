@@ -1,5 +1,6 @@
 package org.solthoth.java.implementing_dao;
 
+import org.jetbrains.annotations.NotNull;
 import org.solthoth.java.implementing_dao.util.DataTransferObject;
 
 import java.math.BigDecimal;
